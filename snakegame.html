@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Snake Game</title>
+  <style>
+    /* Define the style for the game board */
+    #board {
+      width: 400px;
+      height: 400px;
+      background-color: #ddd;
+      position: relative;
+    }
+    /* Define the style for the snake */
+    .snake-segment {
+      width: 10px;
+      height: 10px;
+      background-color: green;
+      position: absolute;
+    }
+    /* Define the style for the food */
+    .food {
+      width: 10px;
+      height: 10px;
+      background-color: red;
+      position: absolute;
+    }
+  </style>
+  <script>
+    // Initialize the game variables
+    var board, snake, food, direction, score, gameOver;
+    
+    function startGame() {
+      // Get the game board element
+      board = document.getElementById("board");
+      
+      // Initialize the snake
+      snake = [
+        {x: 200, y: 200},
+        {x: 190, y: 200},
+        {x: 180, y: 200},
+        {x: 170, y: 200},
+        {x: 160, y: 200}
+      ];
+      
+      // Initialize the food
+      food = {x: Math.floor(Math.random() * 39) * 10, y: Math.floor(Math.random() * 39) * 10};
+      
+      // Initialize the direction
+      direction = "right";
+      
+      // Initialize the score
+      score = 0;
+      
+      // Initialize gameOver
+      gameOver = false;
+      
+      // Clear the board
+      board.innerHTML = "";
+      
+      // Add the snake to the board
+      for (var i = 0; i < snake.length; i++) {
+        var snakeSegment = document.createElement("div");
+        snakeSegment.classList.add("snake-segment");
+        snakeSegment.style.left = snake[i].x + "px";
+        snakeSegment.style.top = snake[i].y + "px";
+        board.appendChild(snakeSegment);
+      }
+      
+      // Add the food to the board
+      var foodElement = document.createElement("div");
+      foodElement.classList.add("food");
+      foodElement.style.left = food.x + "px";
+      foodElement.style.top = food.y + "px";
+      board.appendChild(foodElement);
+      
+      // Start the game loop
+      gameLoop();
+    }
+    
+    function gameLoop() {
+      // Update the snake's position based on the direction
+      var nextPosition = {x: snake[0].x, y: snake[0].y};
+      switch (direction) {
+        case "up":
+          nextPosition.y -= 10;
+          break;
+        case "down":
+          nextPosition.y += 10;
+          break;
+        case "left":
+          nextPosition.x -= 10;
+          break;
+        case "right":
+          nextPosition.x +=10;
+       break;
+}
+  // Check if the snake hit the wall or itself
+  if (nextPosition.x < 0 || nextPosition.x > 390 || nextPosition.y < 0 || nextPosition.y > 390 || checkCollision(nextPosition.x, nextPosition.y, snake)) {
+    gameOver = true;
+    alert("Game Over! Your score is " + score);
+    return;
+  }
+  
+  // Check if the snake ate the food
+  if (nextPosition.x === food.x && nextPosition.y === food.y) {
+    // Increase the score
+    score++;
+    // Generate new food
+    food = {x: Math.floor(Math.random() * 39) * 10, y: Math.floor(Math.random() * 39) * 10};
+    // Display the new food
+    var foodElement = document.createElement("div");
+    foodElement.classList.add("food");
+    foodElement.style.left = food.x + "px";
+    foodElement.style.top = food.y + "px";
+    board.appendChild(foodElement);
+  } else {
+    // Remove the last segment of the snake
+    snake.pop();
+  }
+  
+  // Move the snake
+  snake.unshift(nextPosition);
+  
+  // Clear the board
+  board.innerHTML = "";
+  
+  // Display the snake and the food
+  for (var i = 0; i < snake.length; i++) {
+    var snakeSegment = document.createElement("div");
+    snakeSegment.classList.add("snake-segment");
+    snakeSegment.style.left = snake[i].x + "px";
+    snakeSegment.style.top = snake[i].y + "px";
+    board.appendChild(snakeSegment);
+  }
+  var foodElement = document.createElement("div");
+  foodElement.classList.add("food");
+  foodElement.style.left = food.x + "px";
+  foodElement.style.top = food.y + "px";
+  board.appendChild(foodElement);
+  
+  // Set a timeout for the next frame of the game
+  if (!gameOver) {
+    setTimeout(gameLoop, 100);
+  }
+}
+
+function checkCollision(x, y, array) {
+  // Check if the provided x/y coordinates exist in an array of objects
+  for (var i = 0; i < array.length; i++) {
+    if (array[i].x === x && array[i].y === y) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function changeDirection(event) {
+  // Change the direction of the snake based on the arrow key that was pressed
+  switch (event.keyCode) {
+    case 37:
+      if (direction !== "right") {
+        direction = "left";
+      }
+      break;
+    case 38:
+      if (direction !== "down") {
+        direction = "up";
+      }
+      break;
+    case 39:
+      if (direction !== "left") {
+        direction = "right";
+      }
+      break;
+      case 40:
+        
+if (direction !== "up") {
+direction = "down";
+}
+break;
+}
+}
+</script>
+
+</head>
+<body onload="startGame()" onkeydown="changeDirection(event)">
+  <h1>Snake Game</h1>
+  <div id="board"></div>
+</body>
+</html>
